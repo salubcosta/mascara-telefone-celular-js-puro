@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Máscara Telefone/Celular</title>
+    <style>
+        input{
+            width:50%;
+            height:60px;
+            font-size: 18pt;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // função para validar
+        function validar(input){
+            // Expressão regular para ficar apenas dígitos
+            const num = input.value.replace(/\D/g, '');
+            input.value = num;
+            if(num.length == 10){
+                /*
+                    Quando chegar a 10 dígitos. Ex: 6300001111 (Começa a contar com 0)
+                    Daí é chamado a função para formatar que irá retornar: (63) 0000-1111
+                    Parâmetro true é pra indicar que trata-se de telefone fixo
+                */
+                input.value = formatar(num,true)
+            }
+            if(num.length == 11){
+                // Mesma explicação que a anterior, o parâmetro false vai assumir uma formatação para celular
+                input.value = formatar(num,false)
+            }
+        }
+
+        /* 
+            A função formatar vai varrer todo o número como um array e fazer os acréscimos de parênteses e traço
+            nas respectivas posições: 0, 2 [6 para fixo| 7 para celular]. Exemplo: 63900001111 e true
+            Posição 0 => atribui para variável "formatado" o valor (6
+            Posição 1 => Só inclui o próximo dígito para a variável "formatado" (63
+            Posição 2 => atribui para variável "formatado" o valor (63) 9
+            Posição 3,4,5 => Só inclui os próximos dígitos para a variável "formatado" (63) 9000
+            Se fixo e posição 6 => inclui o traço e o dígito. como não é fixo só inclui o próximo dígito: (63) 90000
+            Se não fixo e posição 7 => inclui o traço e o próximo dígito: (63) 90000-1
+            Para as possições 8, 9 e 10 apenas inclui os dígitos para a variável "formatado" (63) 90000-1111
+
+            No final é retornado a string formatada, a saber: (63) 90000-1111
+        */
+        function formatar(numero, fixo){
+            let formatado = '';
+            for(let i = 0; i < numero.length; i++){
+                if(i == 0) {
+                    formatado += '('+numero[i];
+                    continue;
+                }
+                if(i == 2) {
+                    formatado += ') '+numero[i];
+                    continue;
+                }
+                if(fixo){
+                    if(i==6) {
+                        formatado += '-'+numero[i];
+                        continue;
+                    }
+                } else{
+                    if(i==7) {
+                        formatado += '-'+numero[i];
+                        continue;
+                    }
+                }
+                formatado += numero[i];
+            }
+            return formatado;
+        }
+    </script>
+    <input type="text" id="celular" maxlength="15" onkeyup="validar(this)" placeholder="Digite apenas números">        
+</body>
+</html>
